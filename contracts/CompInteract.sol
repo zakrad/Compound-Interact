@@ -1,9 +1,9 @@
 pragma solidity 0.8.8;
 
 import '@openzeppelin/contracts/token/ERC20/IERC20.sol';
-import './CTokenInterface';
-import './ComptrollerInterface';
-import './PriceOracleInterface';
+import './CTokenInterface.sol';
+import './ComptrollerInterface.sol';
+import './PriceOracleInterface.sol';
 
 contract CompInteract {
     ComptrollerInterface public comptroller;
@@ -26,7 +26,7 @@ contract CompInteract {
     }
 
     function redeem(address cTokenAddress, uint cTokenAmount) external {
-        cTokenInterface cToken = CTokenInterface(cTokenAddress);
+        CTokenInterface cToken = CTokenInterface(cTokenAddress);
         uint result = cToken.redeem(cTokenAmount);
         require(
             result == 0,
@@ -45,22 +45,22 @@ contract CompInteract {
     }
 
     function borrow(address cTokenAddress, uint borrowAmount) external {
-        cTokenInterface cToken = CTokenInterface(cTokenAddress);
+        CTokenInterface cToken = CTokenInterface(cTokenAddress);
         address underlyingAddress = cToken.underlying();
         uint result = cToken.borrow(borrowAmount);
         require(
-            results[0] == 0,
+            result == 0,
             'cToken#borrow() failed. see more detail in ErrorReporter.sol of Compound'
         );
     }
 
     function repayBorrow(address cTokenAddress, uint underlyingAmount) external {
-        cTokenInterface cToken = CTokenInterface(cTokenAddress);
+        CTokenInterface cToken = CTokenInterface(cTokenAddress);
         address underlyingAddress = cToken.underlying();
         IERC20(underlyingAddress).approve(cTokenAddress, underlyingAmount);
         uint result = cToken.repayBorrow(underlyingAmount);
         require(
-            results[0] == 0,
+            result == 0,
             'cToken#repayBorrow() failed. see more detail in ErrorReporter.sol of Compound'
         );
     }
@@ -69,7 +69,7 @@ contract CompInteract {
         (uint result, uint liquidity, uint shortfall) = comptroller
         .getAccountLiquidity(address(this));
         require(
-            results[0] == 0,
+            result == 0,
             'comptroller#getAccountLiquidity() failed. see more detail in ErrorReporter.sol of Compound'
         );
         require(shortfall == 0, 'account underwater');
