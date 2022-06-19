@@ -64,4 +64,18 @@ contract CompInteract {
             'cToken#repayBorrow() failed. see more detail in ErrorReporter.sol of Compound'
         );
     }
+
+    function getmaxBorrow(address cTokenAddress) external view returns(uint){
+        (uint result, uint liquidity, uint shortfall) = comptroller
+        .getAccountLiquidity(address(this));
+        require(
+            results[0] == 0,
+            'comptroller#getAccountLiquidity() failed. see more detail in ErrorReporter.sol of Compound'
+        );
+        require(shortfall == 0, 'account underwater');
+        require(liquidity > 0, 'account does not have collateral');
+        uint udnerlyingPrice = priceOracle.getUnderlyingPrice(cTokenAddress);
+        return liquidity / udnerlyingPrice;
+
+    }
 }
