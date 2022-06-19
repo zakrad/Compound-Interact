@@ -33,4 +33,35 @@ contract CompInteract {
             'cToken#redeem() failed see more detail in ErrorReporter.sol of Compound'
         );
     }
+
+    function enterMarket(address cTokenAddress) external {
+        address[] memory markets = new address[](1);
+        markets[0] = cTokenAddress;
+        uint[] memory results = comptroller.enterMarkets(markets);
+        require(
+            results[0] == 0,
+            'comptroller#enterMarket() failed. see more detail in ErrorReporter.sol of Compound'
+        );
+    }
+
+    function borrow(address cTokenAddress, uint borrowAmount) external {
+        cTokenInterface cToken = CTokenInterface(cTokenAddress);
+        address underlyingAddress = cToken.underlying();
+        uint result = cToken.borrow(borrowAmount);
+        require(
+            results[0] == 0,
+            'cToken#borrow() failed. see more detail in ErrorReporter.sol of Compound'
+        );
+    }
+
+    function repayBorrow(address cTokenAddress, uint underlyingAmount) external {
+        cTokenInterface cToken = CTokenInterface(cTokenAddress);
+        address underlyingAddress = cToken.underlying();
+        IERC20(underlyingAddress).approve(cTokenAddress, underlyingAmount);
+        uint result = cToken.repayBorrow(underlyingAmount);
+        require(
+            results[0] == 0,
+            'cToken#repayBorrow() failed. see more detail in ErrorReporter.sol of Compound'
+        );
+    }
 }
